@@ -18,7 +18,15 @@ text_header = "<h1>Enter some text to ROT13:</h1>"
 
 form = """
 <form action="/" method="post">
-    <input textarea name="added_text" value="%(added_text)s" cols="80" rows="10"></textarea>
+    <label>
+        Rotate by:
+        <input name="rot_num"/ value="%(rot_num)s">
+        <br>
+        <br>
+    <label>
+        Text:
+        <input textarea name="added_text" value="%(added_text)s" cols="80" rows="10"></textarea>
+    <br>
     <br>
     <input type="submit">
 </form>
@@ -33,8 +41,9 @@ class MainHandler(webapp2.RequestHandler):
     """Handles requests coming in to "/"
     """
 
-    def write_form(self, added_text=""):
-        main_content = text_header + form % {"added_text": added_text}
+    def write_form(self, added_text="", rot_num=""):
+        main_content = text_header + form % {"added_text": added_text,
+                                             "rot_num": rot_num}
         response = page_header + main_content + page_footer
         self.response.write(response)
 
@@ -43,13 +52,14 @@ class MainHandler(webapp2.RequestHandler):
 
     def post(self):
         new_text = self.request.get("added_text")
-
+        rotation = self.request.get("rot_num")
+        rotation = int(rotation)
         newText = ""
         for char in new_text:
-            newChar = rotate_character(char, 13)
+            newChar = rotate_character(char, rotation)
             newText = newText + newChar
 
-        self.write_form(newText)
+        self.write_form(newText, rotation)
 
 #    def alphabet_position(letter):
 #    """returns position (0-25) of a letter
