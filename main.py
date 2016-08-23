@@ -14,38 +14,32 @@ page_header = """
 <body>
 """
 
-#html boilerplate for the bottom of every page
+text_header = "<h1>Enter some text to ROT13:</h1>"
+
+form = """
+<form action="/" method="post">
+    <input textarea name="added_text" value="%(added_text)s" cols="80" rows="10"></textarea>
+    <br>
+    <input type="submit">
+</form>
+"""
+
 page_footer = """
 </body>
 </html>
 """
 
-
-
 class MainHandler(webapp2.RequestHandler):
     """Handles requests coming in to "/"
     """
 
-    def get(self):
-
-        text_header = "<h1>Enter some text to ROT13:</h1>"
-
-        #form for adding text
-        add_form = """
-        <form action="/add" method="post">
-            <textarea name="added_text" cols="80" rows="10"></textarea>
-            <br>
-            <input type="submit">
-        </form>
-        """
-
-        main_content = text_header + add_form
+    def write_form(self, added_text=""):
+        main_content = text_header + form % {"added_text": added_text}
         response = page_header + main_content + page_footer
         self.response.write(response)
 
-class rot_13(webapp2.RequestHandler):
-    """Handles requests coming in to '/add'
-    """
+    def get(self):
+        self.write_form()
 
     def post(self):
         new_text = self.request.get("added_text")
@@ -55,8 +49,7 @@ class rot_13(webapp2.RequestHandler):
             newChar = rotate_character(char, 13)
             newText = newText + newChar
 
-
-        self.response.write(newText)
+        self.write_form(newText)
 
 #    def alphabet_position(letter):
 #    """returns position (0-25) of a letter
@@ -73,5 +66,4 @@ class rot_13(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-    ('/add', rot_13)
 ], debug=True)
