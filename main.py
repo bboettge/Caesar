@@ -14,7 +14,7 @@ page_header = """
 <body>
 """
 
-text_header = "<h1>Enter some text to ROT13:</h1>"
+text_header = "<h1>Enter some text to encrypt:</h1>"
 
 form = """
 <form action="/" method="post">
